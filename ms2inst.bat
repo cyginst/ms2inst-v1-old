@@ -331,17 +331,18 @@ exit /b
     var emacsPath = opts.root + "\\usr\\bin\\emacs.exe";
     if (fso.FileExists(emacsPath)) {
       var name, icon, target, args;
-      function scEmacs(mingwBits) {
-        name = "Emacs MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
+      function scEmacs(msystem) {
+        name = "Emacs {0} @{1} ({2}bit)".format(msystem, opts.name, opts.bits);
         icon = opts.root + "\\emacs.ico";
         target = minttyPath;
-        args = "{1} -i /emacs.ico -t \"Emacs MINGW{0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
-               .format(mingwBits, minttyCommon, opts.name, opts.bits);
+        args = "{1} -i /emacs.ico -t \"Emacs {0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM={0} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
+               .format(msystem, minttyCommon, opts.name, opts.bits);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
       }
-      scEmacs(32);
-      scEmacs(64);
+      scEmacs("MINGW32");
+      scEmacs("MINGW64");
+      scEmacs("MSYS");
     }
 
     function editEmacsSiteStart(siteStartPath) {
