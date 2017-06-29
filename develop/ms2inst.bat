@@ -6,7 +6,7 @@ if "%1"=="SUBPROC" goto skip_init
 
 set CYG_NAME=ms2inst
 set CYG_BITS=32
-set CYG_PKGS=diffutils,vim,tmux-git,emacs,glib2,libhogweed,mingw-w64-i686-gcc,mingw-w64-i686-emacs,mingw-w64-x86_64-emacs
+set CYG_PKGS=procps,psmisc,tmux-git,diffutils,vim,emacs,glib2,libhogweed,mingw-w64-i686-gcc,mingw-w64-i686-emacs,mingw-w64-x86_64-emacs
 set DT_ICONS=1
 ::set CYG_HOME=.
 ::set CYG_ASIS=1
