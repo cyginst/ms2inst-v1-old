@@ -39,9 +39,12 @@ call :dl_from_url 7z.exe https://github.com/cyginst/ms2inst-v1/raw/master/7z.exe
 call :dl_from_url 7z.dll https://github.com/cyginst/ms2inst-v1/raw/master/7z.dll
 set CYG_ROOT=%SCRIPT_CURRENT_DIR%%CYG_NAME%.m%CYG_BITS%
 if not exist "%CYG_ROOT%" (
-    rmdir /s /q "%CYG_ROOT%.tmp"
+    if exist "%CYG_ROOT%.tmp" rmdir /s /q "%CYG_ROOT%.tmp"
     7z.exe x -y -o"%CYG_ROOT%.tmp" "%CYG_SETUP%" && move "%CYG_ROOT%.tmp" "%CYG_ROOT%"
 )
+rem set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Syuu"
+rem echo %cmd%
+rem %cmd%
 if not "%CYG_PKGS%"=="" (
   for %%a in ("%CYG_PKGS:,=" "%") do (
       set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi %%~a >& /dev/null || pacman --noconfirm -S %%~a"
