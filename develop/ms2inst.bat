@@ -251,9 +251,7 @@ exit /b
     }
 
     var desktopPath = shell.SpecialFolders("Desktop");
-    if (opts.debug) WScript.Echo("desktopPath=" + desktopPath);
-
-    var name, icon, target, args;
+    if (opts.debug) echo("desktopPath=" + desktopPath);
 
     var minttyPath = opts.root + "\\usr\\bin\\mintty.exe";
     if (!fso.FileExists(minttyPath)) return;
@@ -266,21 +264,32 @@ exit /b
 
     var minttyCommon = "--window max";
 
+    var name, icon, target, args;
+    function scMingwShell(mingwBits) {
+      name = "MINGW{0} Shell @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
+      icon = opts.root + "\\mingw{0}.exe, 0".format(mingwBits);
+      target = minttyPath;
+      args = "{1} -i /mingw{0}.exe  /usr/bin/env MSYSTEM=MINGW{0} {2} /usr/bin/bash -l -i".format(mingwBits, minttyCommon, opts.home=="" ? "" : "HOME="+opts.home);
+      createShorcut(opts.root, name, icon, target, args);
+      if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+    }
+    scMingwShell(32);
+    scMingwShell(64);
+    /*
     name = "MINGW32 Shell @{0} ({1}bit)".format(opts.name, opts.bits);
     icon = opts.root + "\\mingw32.exe, 0";
     target = minttyPath;
     args = "{0} -i /mingw32.exe  /usr/bin/env MSYSTEM=MINGW32 {1} /usr/bin/bash -l -i".format(minttyCommon, opts.home=="" ? "" : "HOME="+opts.home);
     createShorcut(opts.root, name, icon, target, args);
     if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
-
     name = "MINGW64 Shell @{0} ({1}bit)".format(opts.name, opts.bits);
     icon = opts.root + "\\mingw64.exe, 0";
     target = minttyPath;
     args = "{0} -i /mingw64.exe  /usr/bin/env MSYSTEM=MINGW64 {1} /usr/bin/bash -l -i".format(minttyCommon, opts.home=="" ? "" : "HOME="+opts.home);
     createShorcut(opts.root, name, icon, target, args);
     if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+    */
 
-if (true) {
     var tmuxPath = opts.root + "\\usr\\bin\\tmux.exe";
     if (fso.FileExists(tmuxPath)) {
       var tmuxConfPath = opts.root + "\\etc\\tmux.conf";
@@ -301,6 +310,18 @@ if (true) {
       replaceSetting(tmuxConfPath, "bind-key -n C-Right ",
                 opts.asis ? null : "bind-key -n C-Right resize-pane -R \\; display-panes");
       var name, icon, target, args;
+      function scTmux(mingwBits) {
+        name = "Tmux MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
+        icon = opts.root + "\\mingw{0}.exe, 0".format(mingwBits);
+        target = minttyPath;
+        args = "{1} -i /mingw{0}.exe -t \"Tmux MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} {4} /usr/bin/bash -l -c  \"/usr/bin/tmux\""
+               .format(mingwBits, minttyCommon, opts.name, opts.bits, opts.home=="" ? "" : "HOME="+opts.home);
+        createShorcut(opts.root, name, icon, target, args);
+        if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+      }
+      scTmux(32);
+      scTmux(64);
+      /*
       name = "Tmux MINGW32 @{0} ({1}bit)".format(opts.name, opts.bits);
       icon = opts.root + "\\mingw32.exe, 0";
       target = minttyPath;
@@ -308,12 +329,24 @@ if (true) {
              .format(minttyCommon, opts.name, opts.bits, opts.home=="" ? "" : "HOME="+opts.home);
       createShorcut(opts.root, name, icon, target, args);
       if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+      */
     }
-}
 
     var emacsPath = opts.root + "\\usr\\bin\\emacs.exe";
     if (fso.FileExists(emacsPath)) {
       var name, icon, target, args;
+      function scEmacs(mingwBits) {
+        name = "Emacs MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
+        icon = opts.root + "\\mingw{0}.exe, 0".format(mingwBits);
+        target = minttyPath;
+        args = "{1} -i /mingw{0}.exe -t \"Emacs MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} {4} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
+               .format(mingwBits, minttyCommon, opts.name, opts.bits, opts.home=="" ? "" : "HOME="+opts.home);
+        createShorcut(opts.root, name, icon, target, args);
+        if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+      }
+      scEmacs(32);
+      scEmacs(64);
+      /*
       name = "Emacs MINGW32 @{0} ({1}bit)".format(opts.name, opts.bits);
       icon = opts.root + "\\mingw32.exe, 0";
       target = minttyPath;
@@ -328,6 +361,7 @@ if (true) {
              .format(minttyCommon, opts.name, opts.bits, opts.home=="" ? "" : "HOME="+opts.home);
       createShorcut(opts.root, name, icon, target, args);
       if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+      */
     }
 
     function editEmacsSiteStart(siteStartPath) {
