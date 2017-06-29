@@ -34,9 +34,9 @@ if "%CYG_BITS%"=="32" (
     if not "%1"=="SUBPROC" pause
     exit /b
 )
-call :dl_from_url %CYG_SETUP% https://github.com/cyginst/ms2inst-v1/raw/master/binaries/%CYG_SETUP%
-call :dl_from_url 7z.exe      https://github.com/cyginst/ms2inst-v1/raw/master/binaries/7z.exe
-call :dl_from_url 7z.dll      https://github.com/cyginst/ms2inst-v1/raw/master/binaries/7z.dll
+call :dl_from_url %CYG_SETUP% https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/%CYG_SETUP%
+call :dl_from_url 7z.exe      https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.exe
+call :dl_from_url 7z.dll      https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.dll
 set CYG_ROOT=%SCRIPT_CURRENT_DIR%%CYG_NAME%.m%CYG_BITS%
 if not exist "%CYG_ROOT%" (
     if exist "%CYG_ROOT%.tmp" rmdir /s /q "%CYG_ROOT%.tmp"
