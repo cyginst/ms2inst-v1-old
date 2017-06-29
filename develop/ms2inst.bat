@@ -13,7 +13,6 @@ set DT_ICONS=1
 
 set CYG_DEBUG=0
 set CYG_SITE=http://mirrors.kernel.org/sourceware/cygwin/
-set CYG_LANG=ja
 set CYG_FONT=MS Gothic
 set CYG_FONT_HEIGHT=12
 set CYG_CURSOR_TYPE=block
@@ -45,13 +44,14 @@ if not exist "%CYG_ROOT%" (
 )
 if not "%CYG_PKGS%"=="" (
   for %%a in ("%CYG_PKGS:,=" "%") do (
-      echo package name is %%~a
       set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi %%~a >& /dev/null || pacman --noconfirm -S %%~a"
       echo !cmd!
       !cmd!
   )
 )
 cscript.exe //nologo //E:JScript "%~f0"
+
+echo Installation for %CYG_NAME% finished!
 
 endlocal
 if not "%1"=="SUBPROC" pause
@@ -244,8 +244,8 @@ exit /b
       }
       defaultSetting(bashrcPath, "[[ -n \"${MSYS2_PS1}\" ]] && export PS1=", null);
       defaultSetting(bashrcPath, "[[ $(declare -p PS1 2>/dev/null | cut -c 1-11) = 'declare -x ' ]]", null);
-          var ps1 = ("if [ \"x$INSIDE_EMACS\" != \"x\" ]; then export PS1='\\[\\e[35m\\]\\u@{0} $MSYSTEM \\w\\[\\e[0m\\]\\n\\$ '; "
-                     + "else export PS1='\\[\\e]0;$MSYSTEM @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
+          var ps1 = ("if [ \"x$INSIDE_EMACS\" != \"x\" ]; then export PS1='\\[\\e[35m\\]\\u@{0} $MSYSTEM({1}bit) \\w\\[\\e[0m\\]\\n\\$ '; "
+                     + "else export PS1='\\[\\e]0;$MSYSTEM({1}bit) @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM({1}bit)\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
                     .format(opts.name, opts.bits);
       replaceSetting(bashrcPath, "  export PS1=", ps1);
     }
