@@ -314,17 +314,18 @@ exit /b
       replaceSetting(tmuxConfPath, "bind-key -n C-Right ",
                 opts.asis ? null : "bind-key -n C-Right resize-pane -R \\; display-panes");
       var name, icon, target, args;
-      function scTmux(mingwBits) {
-        name = "Tmux MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
+      function scTmux(msystem) {
+        name = "Tmux {0} @{1} ({2}bit)".format(msystem, opts.name, opts.bits);
         icon = opts.root + "\\tmux.ico";
         target = minttyPath;
-        args = "{1} -i /usr/bin/mintty.exe -t \"Tmux MINGW{0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/tmux new-session\""
-               .format(mingwBits, minttyCommon, opts.name, opts.bits);
+        args = "{1} -i /usr/bin/mintty.exe -t \"Tmux {0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM={0} /usr/bin/bash -l -c  \"/usr/bin/tmux new-session\""
+               .format(msystem, minttyCommon, opts.name, opts.bits);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
       }
-      scTmux(32);
-      scTmux(64);
+      scTmux("MINGW32");
+      scTmux("MINGW64");
+      scTmux("MSYS");
     }
 
     var emacsPath = opts.root + "\\usr\\bin\\emacs.exe";
