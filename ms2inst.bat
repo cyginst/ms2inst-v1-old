@@ -1,12 +1,12 @@
 @if(0)==(0) echo off
-:: URL: https://github.com/cyginst/cyginst-v1/blob/master/cyginst.bat
+:: URL: https://github.com/cyginst/ms2inst-v1/blob/master/ms2inst.bat
 setlocal ENABLEDELAYEDEXPANSION
 
 if "%1"=="SUBPROC" goto skip_init
 
 set CYG_NAME=ms2inst
 set CYG_BITS=32
-set CYG_PKGS=procps,psmisc,tmux-git,diffutils,vim,emacs,glib2,libhogweed,mingw-w64-i686-gcc,mingw-w64-i686-emacs,mingw-w64-x86_64-emacs
+set CYG_PKGS=diffutils,man-db,procps,psmisc,tmux-git,vim
 set DT_ICONS=1
 ::set CYG_HOME=.
 ::set CYG_ASIS=1
@@ -20,8 +20,11 @@ set CYG_CONFIRM_EXIT=no
 
 :skip_init
 
+
 set SCRIPT=%~0
 for /f "delims=\ tokens=*" %%z in ("%SCRIPT%") do (set SCRIPT_CURRENT_DIR=%%~dpz)
+
+if not exist wget.exe call :dl_from_url wget.exe https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/wget.exe
 
 if "%CYG_DEBUG%"=="1" echo on
 set CYG_SETUP=
@@ -34,13 +37,13 @@ if "%CYG_BITS%"=="32" (
     if not "%1"=="SUBPROC" pause
     exit /b
 )
-call :dl_from_url %CYG_SETUP% https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/%CYG_SETUP%
-call :dl_from_url 7z.exe      https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.exe
-call :dl_from_url 7z.dll      https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.dll
+wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.exe
+wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.dll
+wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/%CYG_SETUP%
 set CYG_ROOT=%SCRIPT_CURRENT_DIR%%CYG_NAME%.m%CYG_BITS%
 if not exist "%CYG_ROOT%" (
     if exist "%CYG_ROOT%.tmp" rmdir /s /q "%CYG_ROOT%.tmp"
-    7z.exe x -y -o"%CYG_ROOT%.tmp" "%CYG_SETUP%" && move "%CYG_ROOT%.tmp" "%CYG_ROOT%"
+    .binaries\7z.exe x -y -o"%CYG_ROOT%.tmp" ".binaries\%CYG_SETUP%" && move "%CYG_ROOT%.tmp" "%CYG_ROOT%"
 )
 set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Fy"
 echo %cmd%
@@ -67,6 +70,33 @@ goto :EOF
 if not exist "%SCRIPT_CURRENT_DIR%%1" bitsadmin /TRANSFER "%1" "%2" "%SCRIPT_CURRENT_DIR%%1"
 exit /b
 @end
+
+  /*
+  if (WScript.Arguments.Count() > 0) {
+    var fso = new ActiveXObject("Scripting.FileSystemObject");
+    var SCRIPT_CURRENT_DIR = fso.getParentFolderName(WScript.ScriptFullName);
+    var url = "https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/wget.exe";
+    var fileName = SCRIPT_CURRENT_DIR + "\\wget.exe";
+    try {
+      downloadFile(url, fileName);
+    } catch (e) {
+      WScript.Echo("Could not download: wget.exe");
+    }
+    WScript.Quit();
+    function downloadFile(url, fileName) {
+      var StreamTypeEnum  = { adTypeBinary: 1, adTypeText: 2 };
+      var SaveOptionsEnum = { adSaveCreateNotExist: 1, adSaveCreateOverWrite: 2 };
+      var http = WScript.CreateObject("MSXML2.XMLHTTP");
+      var strm = WScript.CreateObject("ADODB.Stream");
+      http.Open("GET", url, false);
+      http.Send();
+      strm.Type = StreamTypeEnum.adTypeBinary;
+      strm.Open();
+      strm.Write(http.responseBody);
+      strm.SaveToFile(fileName, SaveOptionsEnum.adSaveCreateOverWrite);
+    }
+  }
+  */
 
   if (!String.prototype.format) {
     String.prototype.format = function() {
