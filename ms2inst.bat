@@ -247,13 +247,13 @@ exit /b
     if (fso.FileExists(bashrcPath)) {
       if (!fso.FileExists(bashrcOrig)) {
         fso.CopyFile(bashrcPath, bashrcOrig, true);
+        defaultSetting(bashrcPath, "[[ -n \"${MSYS2_PS1}\" ]] && export PS1=", null);
+        defaultSetting(bashrcPath, "[[ $(declare -p PS1 2>/dev/null | cut -c 1-11) = 'declare -x ' ]]", null);
+            var ps1 = ("if [ \"x$INSIDE_EMACS\" != \"x\" ]; then export PS1='\\[\\e[35m\\]\\u@{0} $MSYSTEM({1}bit) \\w\\[\\e[0m\\]\\n\\$ '; "
+                       + "else export PS1='\\[\\e]0;$MSYSTEM({1}bit) @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM({1}bit)\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
+                      .format(opts.name, opts.bits);
+        replaceSetting(bashrcPath, "  export PS1=", ps1);
       }
-      defaultSetting(bashrcPath, "[[ -n \"${MSYS2_PS1}\" ]] && export PS1=", null);
-      defaultSetting(bashrcPath, "[[ $(declare -p PS1 2>/dev/null | cut -c 1-11) = 'declare -x ' ]]", null);
-          var ps1 = ("if [ \"x$INSIDE_EMACS\" != \"x\" ]; then export PS1='\\[\\e[35m\\]\\u@{0} $MSYSTEM({1}bit) \\w\\[\\e[0m\\]\\n\\$ '; "
-                     + "else export PS1='\\[\\e]0;$MSYSTEM({1}bit) @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM({1}bit)\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
-                    .format(opts.name, opts.bits);
-      replaceSetting(bashrcPath, "  export PS1=", ps1);
     }
 
     var desktopPath = shell.SpecialFolders("Desktop");
