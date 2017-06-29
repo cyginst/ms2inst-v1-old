@@ -2,7 +2,6 @@ setlocal
 
 set CYG_NAME=emacs.test
 set CYG_BITS=32
-::set CYG_CATS=Archive,Python
 set CYG_PKGS=procps,psmisc,tmux-git,diffutils,vim,emacs,glib2,libhogweed
 set DT_ICONS=1
 ::set CYG_HOME=.
