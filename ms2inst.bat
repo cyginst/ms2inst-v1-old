@@ -234,12 +234,14 @@ exit /b
 
     var profilePath = opts.root + "\\etc\\profile";
     if (opts.home == "") {
+      replaceSetting(profilePath, "MSYS2_PATH=", "MSYS2_PATH=\"/usr/local/bin:/usr/bin:/bin\"");
     } else {
       var absoluteHome = opts.home.endsWith("$");
       opts.home = opts.home.removeLast("$");
       opts.home = fso.GetAbsolutePathName(opts.home).replace(new RegExp("\\\\", "g"), "/");
       opts.home = opts.home.removeLast("/");
-      opts.home = opts.home + (absoluteHome ? "" : "/%USERNAME%");
+      var unixHome = "`/usr/bin/cygpath -u {0}`".format(opts.home);
+      replaceSetting(profilePath, "MSYS2_PATH=", "MSYS2_PATH=\"/usr/local/bin:/usr/bin:/bin\";HOME=" + unixHome + (absoluteHome ? "" : "/$USER"));
     }
 
     var bashrcPath = opts.root + "\\etc\\bash.bashrc";
@@ -275,7 +277,7 @@ exit /b
       name = "MINGW{0} Shell @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
       icon = opts.root + "\\mingw{0}.exe, 0".format(mingwBits);
       target = minttyPath;
-      args = "{1} -i /mingw{0}.exe  /usr/bin/env MSYSTEM=MINGW{0} {2} /usr/bin/bash -l -i".format(mingwBits, minttyCommon, opts.home=="" ? "" : "HOME="+opts.home);
+      args = "{1} -i /mingw{0}.exe  /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -i".format(mingwBits, minttyCommon);
       createShorcut(opts.root, name, icon, target, args);
       if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
     }
@@ -312,8 +314,8 @@ exit /b
         name = "Tmux MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
         icon = opts.root + "\\tmux.ico";
         target = minttyPath;
-        args = "{1} -i /tmux.ico -t \"Tmux MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} {4} /usr/bin/bash -l -c  \"/usr/bin/tmux\""
-               .format(mingwBits, minttyCommon, opts.name, opts.bits, opts.home=="" ? "" : "HOME="+opts.home);
+        args = "{1} -i /tmux.ico -t \"Tmux MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/tmux\""
+               .format(mingwBits, minttyCommon, opts.name, opts.bits);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
       }
@@ -328,8 +330,8 @@ exit /b
         name = "Emacs MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
         icon = opts.root + "\\emacs.ico";
         target = minttyPath;
-        args = "{1} -i /emacs.ico -t \"Emacs MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} {4} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
-               .format(mingwBits, minttyCommon, opts.name, opts.bits, opts.home=="" ? "" : "HOME="+opts.home);
+        args = "{1} -i /emacs.ico -t \"Emacs MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
+               .format(mingwBits, minttyCommon, opts.name, opts.bits);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
       }
