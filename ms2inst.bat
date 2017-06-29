@@ -42,6 +42,9 @@ if not exist "%CYG_ROOT%" (
     if exist "%CYG_ROOT%.tmp" rmdir /s /q "%CYG_ROOT%.tmp"
     7z.exe x -y -o"%CYG_ROOT%.tmp" "%CYG_SETUP%" && move "%CYG_ROOT%.tmp" "%CYG_ROOT%"
 )
+set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Fy"
+echo %cmd%
+%cmd%
 rem set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Syuu"
 rem echo %cmd%
 rem %cmd%
