@@ -4,7 +4,7 @@ set CYG_NAME=emacs.test
 set CYG_BITS=32
 set CYG_PKGS=procps,psmisc,tmux-git,diffutils,vim,emacs,glib2,libhogweed
 set DT_ICONS=1
-::set CYG_HOME=.
+set CYG_HOME=.$
 ::set CYG_ASIS=1
 
 set CYG_DEBUG=0
