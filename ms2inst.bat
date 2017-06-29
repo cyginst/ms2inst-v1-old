@@ -252,7 +252,7 @@ exit /b
         defaultSetting(bashrcPath, "[[ -n \"${MSYS2_PS1}\" ]] && export PS1=", null);
         defaultSetting(bashrcPath, "[[ $(declare -p PS1 2>/dev/null | cut -c 1-11) = 'declare -x ' ]]", null);
             var ps1 = ("if [ \"x$INSIDE_EMACS\" != \"x\" ]; then export PS1='\\[\\e[35m\\]\\u@{0} $MSYSTEM({1}bit) \\w\\[\\e[0m\\]\\n\\$ '; "
-                       + "else export PS1='\\[\\e]0;$MSYSTEM({1}bit) @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM({1}bit)\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
+                       + "else export PS1='\\[\\e]0;$MSYSTEM ({1}bit) @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM({1}bit)\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
                       .format(opts.name, opts.bits);
         replaceSetting(bashrcPath, "  export PS1=", ps1);
       }
@@ -293,6 +293,9 @@ exit /b
     var tmuxPath = opts.root + "\\usr\\bin\\tmux.exe";
     if (fso.FileExists(tmuxPath)) {
       var tmuxConfPath = opts.root + "\\etc\\tmux.conf";
+      
+      replaceSetting(tmuxConfPath, "set-option -ga update-environment ",
+                opts.asis ? null : "set-option -ga update-environment ' MSYSTEM'");
       replaceSetting(tmuxConfPath, "bind -n S-up ",
                 opts.asis ? null : "bind -n S-up select-pane -U \\; display-panes");
       replaceSetting(tmuxConfPath, "bind -n S-down ",
@@ -314,7 +317,7 @@ exit /b
         name = "Tmux MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
         icon = opts.root + "\\tmux.ico";
         target = minttyPath;
-        args = "{1} -i /tmux.ico -t \"Tmux MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/tmux\""
+        args = "{1} -i /usr/bin/mintty.exe -t \"Tmux MINGW{0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/tmux new-session -A -s MINGW{0}\""
                .format(mingwBits, minttyCommon, opts.name, opts.bits);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
@@ -330,7 +333,7 @@ exit /b
         name = "Emacs MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
         icon = opts.root + "\\emacs.ico";
         target = minttyPath;
-        args = "{1} -i /emacs.ico -t \"Emacs MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
+        args = "{1} -i /emacs.ico -t \"Emacs MINGW{0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
                .format(mingwBits, minttyCommon, opts.name, opts.bits);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
