@@ -273,16 +273,17 @@ exit /b
     var minttyCommon = "--window max";
 
     var name, icon, target, args;
-    function scMingwShell(mingwBits) {
-      name = "MINGW{0} Shell @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
-      icon = opts.root + "\\mingw{0}.exe, 0".format(mingwBits);
+    function scMingwShell(msystem) {
+      name = "{0} Shell @{1} ({2}bit)".format(msystem, opts.name, opts.bits);
+      icon = opts.root + "\\msys2.ico";
       target = minttyPath;
-      args = "{1} -i /mingw{0}.exe  /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -i".format(mingwBits, minttyCommon);
+      args = "{1} -i /msys2.ico /usr/bin/env MSYSTEM={0} /usr/bin/bash -l -i".format(msystem, minttyCommon);
       createShorcut(opts.root, name, icon, target, args);
       if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
     }
-    scMingwShell(32);
-    scMingwShell(64);
+    scMingwShell("MINGW32");
+    scMingwShell("MINGW64");
+    scMingwShell("MSYS");
 
     var vimPath = opts.root + "\\usr\\bin\\vim.exe";
     if (fso.FileExists(vimPath)) {
