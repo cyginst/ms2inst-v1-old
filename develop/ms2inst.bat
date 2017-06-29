@@ -6,7 +6,7 @@ if "%1"=="SUBPROC" goto skip_init
 
 set CYG_NAME=ms2inst
 set CYG_BITS=32
-set CYG_PKGS=vim,tmux-git,emacs,glib2,libhogweed,mingw-w64-i686-gcc,mingw-w64-i686-emacs,mingw-w64-x86_64-emacs
+set CYG_PKGS=diffutils,vim,tmux-git,emacs,glib2,libhogweed,mingw-w64-i686-gcc,mingw-w64-i686-emacs,mingw-w64-x86_64-emacs
 set DT_ICONS=1
 ::set CYG_HOME=.
 ::set CYG_ASIS=1
@@ -242,13 +242,13 @@ exit /b
       if (!fso.FileExists(bashrcOrig)) {
         fso.CopyFile(bashrcPath, bashrcOrig, true);
       }
+      defaultSetting(bashrcPath, "[[ -n \"${MSYS2_PS1}\" ]] && export PS1=", null);
+      defaultSetting(bashrcPath, "[[ $(declare -p PS1 2>/dev/null | cut -c 1-11) = 'declare -x ' ]]", null);
+          var ps1 = ("if [ \"x$INSIDE_EMACS\" != \"x\" ]; then export PS1='\\[\\e[35m\\]\\u@{0} $MSYSTEM \\w\\[\\e[0m\\]\\n\\$ '; "
+                     + "else export PS1='\\[\\e]0;$MSYSTEM @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
+                    .format(opts.name, opts.bits);
+      replaceSetting(bashrcPath, "  export PS1=", ps1);
     }
-    defaultSetting(bashrcPath, "[[ -n \"${MSYS2_PS1}\" ]] && export PS1=", null);
-    defaultSetting(bashrcPath, "[[ $(declare -p PS1 2>/dev/null | cut -c 1-11) = 'declare -x ' ]]", null);
-        var ps1 = ("if [ \"x$INSIDE_EMACS\" != \"x\" ]; then export PS1='\\[\\e[35m\\]\\u@{0} $MSYSTEM \\w\\[\\e[0m\\]\\n\\$ '; "
-                   + "else export PS1='\\[\\e]0;$MSYSTEM @{0} \\w\\a\\]\\n\\[\\e[32m\\]\\u@{0} \\[\\e[35m\\]$MSYSTEM\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\$ '; fi")
-                  .format(opts.name, opts.bits);
-    replaceSetting(bashrcPath, "  export PS1=", ps1);
 
     var desktopPath = shell.SpecialFolders("Desktop");
     if (opts.debug) WScript.Echo("desktopPath=" + desktopPath);
