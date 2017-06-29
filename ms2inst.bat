@@ -317,7 +317,7 @@ exit /b
         name = "Tmux MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
         icon = opts.root + "\\tmux.ico";
         target = minttyPath;
-        args = "{1} -i /usr/bin/mintty.exe -t \"Tmux MINGW{0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/tmux new-session -A -s MINGW{0}\""
+        args = "{1} -i /usr/bin/mintty.exe -t \"Tmux MINGW{0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} /usr/bin/bash -l -c  \"/usr/bin/tmux new-session\""
                .format(mingwBits, minttyCommon, opts.name, opts.bits);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
