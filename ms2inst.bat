@@ -326,9 +326,9 @@ exit /b
       var name, icon, target, args;
       function scEmacs(mingwBits) {
         name = "Emacs MINGW{0} @{1} ({2}bit)".format(mingwBits, opts.name, opts.bits);
-        icon = opts.root + "\\mingw{0}.exe, 0".format(mingwBits);
+        icon = opts.root + "\\emacs.ico";
         target = minttyPath;
-        args = "{1} -i /mingw{0}.exe -t \"Emacs MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} {4} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
+        args = "{1} -i /emacs.ico -t \"Emacs MINGW32 @{2} ({3}bit)\" /usr/bin/env MSYSTEM=MINGW{0} {4} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
                .format(mingwBits, minttyCommon, opts.name, opts.bits, opts.home=="" ? "" : "HOME="+opts.home);
         createShorcut(opts.root, name, icon, target, args);
         if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
