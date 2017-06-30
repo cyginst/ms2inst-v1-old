@@ -1,4 +1,4 @@
-@if(0)==(0) echo off
+﻿@echo off
 :: URL: http://bit.ly/cyginst
 :: Last Update: 2017/06/29 21:21
 setlocal
@@ -23,13 +23,21 @@ set CYG_CURSOR_TYPE=block
 set CYG_CONFIRM_EXIT=no
 REM --- DEBUG/CUSTOMIZE(END) ---
 
-cscript.exe //nologo //E:JScript "%~f0"
+@echo off
+for /f "delims=:" %%a in ('findstr -n "^___" %0') do set "LINE=%%a"
+(for /f "skip=%LINE% tokens=* eol=_" %%a in ('type %0') do echo(%%a) > ms2inst-dl.js
+rem @echo on
+cscript.exe //nologo //E:JScript ms2inst-dl.js
+if "%CYG_DEBUG%"=="1" (set HIDE_OPT=-H) else (set HIDE_OPT=+H)
+attrib %HIDE_OPT% ms2inst-dl.js
+attrib %HIDE_OPT% ms2inst.bat
+@echo on
 call ms2inst.bat SUBPROC
 endlocal
 pause
 exit /b
 goto :EOF
-@end
+___DATA___
 var fso = new ActiveXObject("Scripting.FileSystemObject");
 var SCRIPT_CURRENT_DIR = fso.getParentFolderName(WScript.ScriptFullName);
 var url = "https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/ms2inst.bat";
