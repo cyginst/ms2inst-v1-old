@@ -4,24 +4,23 @@ setlocal ENABLEDELAYEDEXPANSION
 
 if "%1"=="SUBPROC" goto skip_init
 
-set CYG_NAME=ms2inst
-set CYG_BITS=32
-rem set CYG_PKGS=diffutils,man-db,procps,psmisc,tmux-git,vim
-set CYG_PKGS=diffutils,man-db,procps,psmisc
-set CYG_PKGS=%CYG_PKGS%,tmux-git &:: THIS IS TMUX
-set CYG_PKGS=%CYG_PKGS%,vim      &:: THIS IS VIM
-set CYG_USE_MINGW32=1
-set CYG_USE_MINGW64=0
-set CYG_USE_MSYS=0
+set MSYS2_NAME=ms2inst
+set MSYS2_BITS=32
+set MSYS2_PKGS=diffutils,man-db,procps,psmisc
+set MSYS2_PKGS=%MSYS2_PKGS%,tmux-git &:: THIS IS TMUX
+set MSYS2_PKGS=%MSYS2_PKGS%,vim      &:: THIS IS VIM
+set MSYS2_USE_MINGW32=1
+set MSYS2_USE_MINGW64=0
+set MSYS2_USE_MSYS=0
 set DT_ICONS=1
-::set CYG_HOME=.
-::set CYG_ASIS=1
+::set MSYS2_HOME=.
+::set MSYS2_ASIS=1
 
-set CYG_DEBUG=0
-set CYG_FONT=MS Gothic
-set CYG_FONT_HEIGHT=12
-set CYG_CURSOR_TYPE=block
-set CYG_CONFIRM_EXIT=no
+set MSYS2_DEBUG=0
+set MSYS2_FONT=MS Gothic
+set MSYS2_FONT_HEIGHT=12
+set MSYS2_CURSOR_TYPE=block
+set MSYS2_CONFIRM_EXIT=no
 
 :skip_init
 
@@ -32,44 +31,44 @@ for /f "delims=\ tokens=*" %%z in ("%SCRIPT%") do (set SCRIPT_CURRENT_DIR=%%~dpz
 if not exist wget.exe call :dl_from_url wget.exe https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/wget.exe
 attrib +H wget.exe
 
-if "%CYG_DEBUG%"=="1" echo on
-set CYG_SETUP=
-if "%CYG_BITS%"=="32" (
-    set CYG_SETUP=msys2-i686-20161025.7z
-) else if "%CYG_BITS%"=="64" (
-    set CYG_SETUP=msys2-x86_64-20161025.7z
+if "%MSYS2_DEBUG%"=="1" echo on
+set MSYS2_SETUP=
+if "%MSYS2_BITS%"=="32" (
+    set MSYS2_SETUP=msys2-i686-20161025.7z
+) else if "%MSYS2_BITS%"=="64" (
+    set MSYS2_SETUP=msys2-x86_64-20161025.7z
 ) else (
-    echo CYG_BITS must be 32 or 64. [Current CYG_BITS: %CYG_BITS%] Aborting!
+    echo MSYS2_BITS must be 32 or 64. [Current MSYS2_BITS: %MSYS2_BITS%] Aborting!
     if not "%1"=="SUBPROC" pause
     exit /b
 )
 wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.exe
 wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.dll
-wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/%CYG_SETUP%
-set CYG_ROOT=%SCRIPT_CURRENT_DIR%%CYG_NAME%.m%CYG_BITS%
-if not exist "%CYG_ROOT%" (
-    if exist "%CYG_ROOT%.tmp" rmdir /s /q "%CYG_ROOT%.tmp"
-    .binaries\7z.exe x -y -o"%CYG_ROOT%.tmp" ".binaries\%CYG_SETUP%" && move "%CYG_ROOT%.tmp" "%CYG_ROOT%"
+wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/%MSYS2_SETUP%
+set MSYS2_ROOT=%SCRIPT_CURRENT_DIR%%MSYS2_NAME%.m%MSYS2_BITS%
+if not exist "%MSYS2_ROOT%" (
+    if exist "%MSYS2_ROOT%.tmp" rmdir /s /q "%MSYS2_ROOT%.tmp"
+    .binaries\7z.exe x -y -o"%MSYS2_ROOT%.tmp" ".binaries\%MSYS2_SETUP%" && move "%MSYS2_ROOT%.tmp" "%MSYS2_ROOT%"
 )
-set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Fy"
+set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Fy"
 echo %cmd%
 %cmd%
-rem set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Syuu"
+rem set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Syuu"
 rem echo %cmd%
 rem %cmd%
-if not "%CYG_PKGS%"=="" (
-  for %%a in ("%CYG_PKGS:,=" "%") do (
-      set CYG_PKG=%%~a
-      call :trim !CYG_PKG! CYG_PKG
-      echo [!CYG_PKG!]
-      set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi !CYG_PKG! >& /dev/null || pacman --noconfirm -S !CYG_PKG!"
+if not "%MSYS2_PKGS%"=="" (
+  for %%a in ("%MSYS2_PKGS:,=" "%") do (
+      set MSYS2_PKG=%%~a
+      call :trim !MSYS2_PKG! MSYS2_PKG
+      echo [!MSYS2_PKG!]
+      set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi !MSYS2_PKG! >& /dev/null || pacman --noconfirm -S !MSYS2_PKG!"
       echo !cmd!
       !cmd!
   )
 )
 cscript.exe //nologo //E:JScript "%~f0"
 
-echo Installation for %CYG_NAME% finished!
+echo Installation for %MSYS2_NAME% finished!
 
 endlocal
 if not "%1"=="SUBPROC" pause
@@ -161,25 +160,25 @@ exit /b
 
   var env = new ActiveXObject("WScript.Shell").Environment("PROCESS");
 
-  var CYG_OPTS = {
-    debug:       (env.item("CYG_DEBUG") == "1"),
-    root:         env.item("CYG_ROOT"),
-    name:         env.item("CYG_NAME"),
-    bits:         env.item("CYG_BITS"),
-    use_mingw32: (env.item("CYG_USE_MINGW32") == "1"),
-    use_mingw64: (env.item("CYG_USE_MINGW64") == "1"),
-    use_msys:    (env.item("CYG_USE_MSYS") == "1"),
+  var MSYS2_OPTS = {
+    debug:       (env.item("MSYS2_DEBUG") == "1"),
+    root:         env.item("MSYS2_ROOT"),
+    name:         env.item("MSYS2_NAME"),
+    bits:         env.item("MSYS2_BITS"),
+    use_mingw32: (env.item("MSYS2_USE_MINGW32") == "1"),
+    use_mingw64: (env.item("MSYS2_USE_MINGW64") == "1"),
+    use_msys:    (env.item("MSYS2_USE_MSYS") == "1"),
     dt_icons:    (env.item("DT_ICONS") == "1"),
-    home:         env.item("CYG_HOME").replace(/^\s+|\s+$/g, ''), /*trim()*/
-    asis:        (env.item("CYG_ASIS") == "1"),
-    lang:         env.item("CYG_LANG"),
-    font:         env.item("CYG_FONT"),
-    font_height:  env.item("CYG_FONT_HEIGHT"),
-    cursor_type:  env.item("CYG_CURSOR_TYPE"),
-    confirm_exit: env.item("CYG_CONFIRM_EXIT")
+    home:         env.item("MSYS2_HOME").replace(/^\s+|\s+$/g, ''), /*trim()*/
+    asis:        (env.item("MSYS2_ASIS") == "1"),
+    lang:         env.item("MSYS2_LANG"),
+    font:         env.item("MSYS2_FONT"),
+    font_height:  env.item("MSYS2_FONT_HEIGHT"),
+    cursor_type:  env.item("MSYS2_CURSOR_TYPE"),
+    confirm_exit: env.item("MSYS2_CONFIRM_EXIT")
   };
 
-  postCygwinInstall(CYG_OPTS);
+  postCygwinInstall(MSYS2_OPTS);
 
   WScript.Quit();
 
