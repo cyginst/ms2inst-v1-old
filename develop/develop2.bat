@@ -11,7 +11,7 @@ set CYG_PKGS=%CYG_PKGS%,tmux-git               &:: THIS IS GIT
 set CYG_PKGS=%CYG_PKGS%,vim                    &:: THIS IS VIM
 set CYG_PKGS=%CYG_PKGS%,emacs,glib2,libhogweed &:: THIS IS EMACS
 set DT_ICONS=1
-::set CYG_HOME=.
+set CYG_HOME=.
 ::set CYG_ASIS=1
 REM --- EDIT THIS PART(END) ---
 
