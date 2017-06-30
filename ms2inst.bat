@@ -6,7 +6,10 @@ if "%1"=="SUBPROC" goto skip_init
 
 set CYG_NAME=ms2inst
 set CYG_BITS=32
-set CYG_PKGS=diffutils,man-db,procps,psmisc,tmux-git,vim
+rem set CYG_PKGS=diffutils,man-db,procps,psmisc,tmux-git,vim
+set CYG_PKGS=diffutils,man-db,procps,psmisc
+set CYG_PKGS=%CYG_PKGS%,tmux-git &:: THIS IS GIT
+set CYG_PKGS=%CYG_PKGS%,vim      &:: THIS IS VIM
 set DT_ICONS=1
 ::set CYG_HOME=.
 ::set CYG_ASIS=1
@@ -52,7 +55,10 @@ rem echo %cmd%
 rem %cmd%
 if not "%CYG_PKGS%"=="" (
   for %%a in ("%CYG_PKGS:,=" "%") do (
-      set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi %%~a >& /dev/null || pacman --noconfirm -S %%~a"
+      set CYG_PKG=%%~a
+      call :trim !CYG_PKG! CYG_PKG
+      echo [!CYG_PKG!]
+      set cmd="%CYG_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi !CYG_PKG! >& /dev/null || pacman --noconfirm -S !CYG_PKG!"
       echo !cmd!
       !cmd!
   )
@@ -65,9 +71,15 @@ endlocal
 if not "%1"=="SUBPROC" pause
 exit /b
 goto :EOF
+
 :dl_from_url
 if not exist "%SCRIPT_CURRENT_DIR%%1" bitsadmin /TRANSFER "%1" "%2" "%SCRIPT_CURRENT_DIR%%1"
 exit /b
+
+:trim
+set %2=%1
+exit /b
+
 @end
 
   /*
