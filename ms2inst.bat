@@ -61,7 +61,8 @@ if not "%MSYS2_PKGS%"=="" (
       set MSYS2_PKG=%%~a
       call :trim !MSYS2_PKG! MSYS2_PKG
       echo [!MSYS2_PKG!]
-      set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi !MSYS2_PKG! >& /dev/null || pacman --noconfirm -S !MSYS2_PKG!"
+      rem set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi !MSYS2_PKG! >& /dev/null || pacman --noconfirm -S !MSYS2_PKG!"
+      set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm --needed -S !MSYS2_PKG!"
       echo !cmd!
       !cmd!
   )
