@@ -10,6 +10,9 @@ rem set CYG_PKGS=diffutils,man-db,procps,psmisc,tmux-git,vim
 set CYG_PKGS=diffutils,man-db,procps,psmisc
 set CYG_PKGS=%CYG_PKGS%,tmux-git &:: THIS IS TMUX
 set CYG_PKGS=%CYG_PKGS%,vim      &:: THIS IS VIM
+set CYG_USE_MINGW32=1
+set CYG_USE_MINGW64=0
+set CYG_USE_MSYS=0
 set DT_ICONS=1
 ::set CYG_HOME=.
 ::set CYG_ASIS=1
@@ -163,6 +166,9 @@ exit /b
     root:         env.item("CYG_ROOT"),
     name:         env.item("CYG_NAME"),
     bits:         env.item("CYG_BITS"),
+    use_mingw32: (env.item("CYG_USE_MINGW32") == "1"),
+    use_mingw64: (env.item("CYG_USE_MINGW64") == "1"),
+    use_msys:    (env.item("CYG_USE_MSYS") == "1"),
     dt_icons:    (env.item("DT_ICONS") == "1"),
     home:         env.item("CYG_HOME").replace(/^\s+|\s+$/g, ''), /*trim()*/
     asis:        (env.item("CYG_ASIS") == "1"),
@@ -196,6 +202,21 @@ exit /b
     function createShorcut(dir, name, icon, target, args) {
       var shell = new ActiveXObject("WScript.Shell");
       var sc = shell.CreateShortcut(dir + "\\" + name + ".lnk");
+      sc.IconLocation = icon;
+      sc.TargetPath = target;
+      sc.Arguments = args;
+      sc.WorkingDirectory = "";
+      sc.Save();
+    }
+
+    function createShorcut2(used, dir, name, icon, target, args) {
+      var scPath = dir + "\\" + name + ".lnk";
+      if (!used) {
+        deleteFile(scPath);
+        return;
+      }
+      var shell = new ActiveXObject("WScript.Shell");
+      var sc = shell.CreateShortcut(scPath);
       sc.IconLocation = icon;
       sc.TargetPath = target;
       sc.Arguments = args;
@@ -315,17 +336,17 @@ exit /b
     var minttyCommon = "--window max";
 
     var name, icon, target, args;
-    function scMingwShell(msystem) {
+    function scMingwShell(msystem, used) {
       name = "{0} Shell @{1} ({2}bit)".format(msystem, opts.name, opts.bits);
       icon = opts.root + "\\msys2.ico";
       target = minttyPath;
       args = "{1} -i /msys2.ico /usr/bin/env MSYSTEM={0} /usr/bin/bash -l -i".format(msystem, minttyCommon);
-      createShorcut(opts.root, name, icon, target, args);
-      if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+      createShorcut2(used, opts.root, name, icon, target, args);
+      if (opts.dt_icons) createShorcut2(used, desktopPath, name, icon, target, args);
     }
-    scMingwShell("MINGW32");
-    scMingwShell("MINGW64");
-    scMingwShell("MSYS");
+    scMingwShell("MINGW32", opts.use_mingw32);
+    scMingwShell("MINGW64", opts.use_mingw64);
+    scMingwShell("MSYS"   , opts.use_msys);
 
     var vimPath = opts.root + "\\usr\\bin\\vim.exe";
     if (fso.FileExists(vimPath)) {
@@ -356,35 +377,35 @@ exit /b
       replaceSetting(tmuxConfPath, "bind-key -n C-Right ",
                 opts.asis ? null : "bind-key -n C-Right resize-pane -R \\; display-panes");
       var name, icon, target, args;
-      function scTmux(msystem) {
+      function scTmux(msystem, used) {
         name = "Tmux {0} @{1} ({2}bit)".format(msystem, opts.name, opts.bits);
         icon = opts.root + "\\tmux.ico";
         target = minttyPath;
         args = "{1} -i /usr/bin/mintty.exe -t \"Tmux {0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM={0} /usr/bin/bash -l -c  \"/usr/bin/tmux new-session\""
                .format(msystem, minttyCommon, opts.name, opts.bits);
-        createShorcut(opts.root, name, icon, target, args);
-        if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+        createShorcut2(used, opts.root, name, icon, target, args);
+        if (opts.dt_icons) createShorcut2(used, desktopPath, name, icon, target, args);
       }
-      scTmux("MINGW32");
-      scTmux("MINGW64");
-      scTmux("MSYS");
+      scTmux("MINGW32", opts.use_mingw32);
+      scTmux("MINGW64", opts.use_mingw64);
+      scTmux("MSYS"   , opts.use_msys);
     }
 
     var emacsPath = opts.root + "\\usr\\bin\\emacs.exe";
     if (fso.FileExists(emacsPath)) {
       var name, icon, target, args;
-      function scEmacs(msystem) {
+      function scEmacs(msystem, used) {
         name = "Emacs {0} @{1} ({2}bit)".format(msystem, opts.name, opts.bits);
         icon = opts.root + "\\emacs.ico";
         target = minttyPath;
         args = "{1} -i /emacs.ico -t \"Emacs {0} @{2} ({3}bit)\" /usr/bin/env MSYSTEM={0} /usr/bin/bash -l -c  \"/usr/bin/emacs -nw --eval '(progn (shell) (delete-other-windows))'\""
                .format(msystem, minttyCommon, opts.name, opts.bits);
-        createShorcut(opts.root, name, icon, target, args);
-        if (opts.dt_icons) createShorcut(desktopPath, name, icon, target, args);
+        createShorcut2(used, opts.root, name, icon, target, args);
+        if (opts.dt_icons) createShorcut2(used, desktopPath, name, icon, target, args);
       }
-      scEmacs("MINGW32");
-      scEmacs("MINGW64");
-      scEmacs("MSYS");
+      scEmacs("MINGW32", opts.use_mingw32);
+      scEmacs("MINGW64", opts.use_mingw64);
+      scEmacs("MSYS"   , opts.use_msys);
     }
 
     function editEmacsSiteStart(siteStartPath) {
