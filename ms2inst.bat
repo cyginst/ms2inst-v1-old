@@ -27,6 +27,7 @@ set SCRIPT=%~0
 for /f "delims=\ tokens=*" %%z in ("%SCRIPT%") do (set SCRIPT_CURRENT_DIR=%%~dpz)
 
 if not exist wget.exe call :dl_from_url wget.exe https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/wget.exe
+attrib +H wget.exe
 
 if "%CYG_DEBUG%"=="1" echo on
 set CYG_SETUP=
