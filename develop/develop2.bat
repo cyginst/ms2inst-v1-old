@@ -1,6 +1,4 @@
 ﻿@echo off
-:: URL: http://bit.ly/cyginst
-:: Last Update: 2017/06/29 21:21
 setlocal
 
 REM --- EDIT THIS PART(START) ---
@@ -23,10 +21,12 @@ set CYG_CURSOR_TYPE=block
 set CYG_CONFIRM_EXIT=no
 REM --- DEBUG/CUSTOMIZE(END) ---
 
+attrib -H ms2inst-dl.js >NUL 2>&1
+attrib -H ms2inst.bat   >NUL 2>&1
 @echo off
 for /f "delims=:" %%a in ('findstr -n "^___" %0') do set "LINE=%%a"
 (for /f "skip=%LINE% tokens=* eol=_" %%a in ('type %0') do echo(%%a) > ms2inst-dl.js
-rem @echo on
+@echo on
 cscript.exe //nologo //E:JScript ms2inst-dl.js
 if "%CYG_DEBUG%"=="1" (set HIDE_OPT=-H) else (set HIDE_OPT=+H)
 attrib %HIDE_OPT% ms2inst-dl.js
