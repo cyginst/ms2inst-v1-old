@@ -2,15 +2,12 @@
 setlocal
 
 REM --- EDIT THIS PART(START) ---
-set CYG_NAME=develop2
+set CYG_NAME=develop1
 set CYG_BITS=32
 set CYG_PKGS=diffutils,man-db,procps,psmisc
-set CYG_PKGS=%CYG_PKGS%,tmux-git               &:: THIS IS TMUX
-set CYG_PKGS=%CYG_PKGS%,vim                    &:: THIS IS VIM
-set CYG_PKGS=%CYG_PKGS%,emacs,glib2,libhogweed &:: THIS IS EMACS
 set CYG_USE_MINGW32=1
-set CYG_USE_MINGW64=0
-set CYG_USE_MSYS=0
+::set CYG_USE_MINGW64=1
+::set CYG_USE_MSYS=1
 set DT_ICONS=1
 set CYG_HOME=.
 ::set CYG_ASIS=1
