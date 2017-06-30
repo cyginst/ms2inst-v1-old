@@ -12,7 +12,6 @@ set DT_ICONS=1
 ::set CYG_ASIS=1
 
 set CYG_DEBUG=0
-set CYG_SITE=http://mirrors.kernel.org/sourceware/cygwin/
 set CYG_FONT=MS Gothic
 set CYG_FONT_HEIGHT=12
 set CYG_CURSOR_TYPE=block
