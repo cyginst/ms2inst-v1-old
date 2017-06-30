@@ -413,7 +413,7 @@ exit /b
         echo("EDIT: " + siteStartPath);
         defaultSetting(siteStartPath,
           "(setq frame-title-format ",
-          "(setq frame-title-format \"[%b] @{0} - Emacs ({1}bit)\")".format(opts.name, opts.bits));
+          "(setq frame-title-format (format \"[%%b] @{0} [%s] - Emacs ({1}bit)\" (getenv \"MSYSTEM\")))".format(opts.name, opts.bits));
         defaultSetting(siteStartPath,
           "(set-frame-parameter nil 'fullscreen ",
           opts.asis ? null : "(set-frame-parameter nil 'fullscreen 'maximized)");
