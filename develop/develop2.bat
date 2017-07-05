@@ -1,49 +1,36 @@
-﻿@echo off
+@if(0)==(0) echo off
 setlocal
 
 REM --- EDIT THIS PART(START) ---
-set CYG_NAME=develop2
-set CYG_BITS=32
-set CYG_PKGS=diffutils,man-db,procps,psmisc
-set CYG_PKGS=%CYG_PKGS%,tmux-git               &:: THIS IS TMUX
-set CYG_PKGS=%CYG_PKGS%,vim                    &:: THIS IS VIM
-set CYG_PKGS=%CYG_PKGS%,emacs,glib2,libhogweed &:: THIS IS EMACS
-set CYG_USE_MINGW32=1
-set CYG_USE_MINGW64=0
-set CYG_USE_MSYS=0
+set MSYS2_NAME=develop2
+set MSYS2_BITS=32
+set MSYS2_PKGS=diffutils,man-db,procps,psmisc
+set MSYS2_PKGS=%MSYS2_PKGS%,tmux-git               &:: THIS IS TMUX
+set MSYS2_PKGS=%MSYS2_PKGS%,vim                    &:: THIS IS VIM
+set MSYS2_PKGS=%MSYS2_PKGS%,emacs,glib2,libhogweed &:: THIS IS EMACS
+set MSYS2_USE_MINGW32=1
+::set MSYS2_USE_MINGW64=1
+::set MSYS2_USE_MSYS=1
 set DT_ICONS=1
-set CYG_HOME=.
-::set CYG_ASIS=1
+set MSYS2_HOME=.
+::set MSYS2_ASIS=1
 REM --- EDIT THIS PART(END) ---
 
 REM --- DEBUG/CUSTOMIZE(START) ---
-set CYG_DEBUG=0
-set CYG_FONT=MS Gothic
-set CYG_FONT_HEIGHT=12
-set CYG_CURSOR_TYPE=block
-set CYG_CONFIRM_EXIT=no
+set MSYS2_DEBUG=0
+set MSYS2_FONT=MS Gothic
+set MSYS2_FONT_HEIGHT=12
+set MSYS2_CURSOR_TYPE=block
+set MSYS2_CONFIRM_EXIT=no
 REM --- DEBUG/CUSTOMIZE(END) ---
 
-attrib -H ms2inst-dl.wsf >NUL 2>&1
-attrib -H ms2inst.bat    >NUL 2>&1
-@echo off
-for /f "delims=:" %%a in ('findstr -n "^___" %0') do set "LINE=%%a"
-(for /f "skip=%LINE% tokens=* eol=_" %%a in ('type %0') do echo(%%a) > ms2inst-dl.wsf
-@echo on
-cscript.exe //nologo ms2inst-dl.wsf
-if "%CYG_DEBUG%"=="1" (set HIDE_OPT=-H) else (set HIDE_OPT=+H)
-attrib %HIDE_OPT% ms2inst-dl.wsf
-attrib %HIDE_OPT% ms2inst.bat
-@echo on
+cscript.exe //nologo //E:JScript "%~f0"
 call ms2inst.bat SUBPROC
 endlocal
 pause
 exit /b
 goto :EOF
-___DATA___
-<package>
-<job>
-<script language="JavaScript">
+@end
 var fso = new ActiveXObject("Scripting.FileSystemObject");
 var SCRIPT_CURRENT_DIR = fso.getParentFolderName(WScript.ScriptFullName);
 var url = "https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/ms2inst.bat";
@@ -66,7 +53,4 @@ function downloadFile(url, fileName) {
   strm.Write(http.responseBody);
   strm.SaveToFile(fileName, SaveOptionsEnum.adSaveCreateOverWrite);
 }
-</script>
-</job>
-</package>
 
