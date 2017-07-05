@@ -28,9 +28,6 @@ set MSYS2_CONFIRM_EXIT=no
 set SCRIPT=%~0
 for /f "delims=\ tokens=*" %%z in ("%SCRIPT%") do (set SCRIPT_CURRENT_DIR=%%~dpz)
 
-if not exist wget.exe call :dl_from_url wget.exe https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/wget.exe
-attrib +H wget.exe
-
 if "%MSYS2_DEBUG%"=="1" echo on
 set MSYS2_SETUP=
 if "%MSYS2_BITS%"=="32" (
@@ -42,9 +39,11 @@ if "%MSYS2_BITS%"=="32" (
     if not "%1"=="SUBPROC" pause
     exit /b
 )
-wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.exe
-wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.dll
-wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/%MSYS2_SETUP%
+if not exist .binaries mkdir .binaries
+if not exist wget.exe call :dl_from_url wget.exe https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/wget.exe
+.binaries\wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.exe
+.binaries\wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/7z.dll
+.binaries\wget -nc --no-check-certificate -P .binaries https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/%MSYS2_SETUP%
 set MSYS2_ROOT=%SCRIPT_CURRENT_DIR%%MSYS2_NAME%.m%MSYS2_BITS%
 if not exist "%MSYS2_ROOT%" (
     if exist "%MSYS2_ROOT%.tmp" rmdir /s /q "%MSYS2_ROOT%.tmp"
@@ -53,15 +52,11 @@ if not exist "%MSYS2_ROOT%" (
 set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Fy"
 echo %cmd%
 %cmd%
-rem set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm -Syuu"
-rem echo %cmd%
-rem %cmd%
 if not "%MSYS2_PKGS%"=="" (
   for %%a in ("%MSYS2_PKGS:,=" "%") do (
       set MSYS2_PKG=%%~a
       call :trim !MSYS2_PKG! MSYS2_PKG
       echo [!MSYS2_PKG!]
-      rem set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman -Qi !MSYS2_PKG! >& /dev/null || pacman --noconfirm -S !MSYS2_PKG!"
       set cmd="%MSYS2_ROOT%\usr\bin\bash.exe" -l -c "pacman --noconfirm --needed -S !MSYS2_PKG!"
       echo !cmd!
       !cmd!
@@ -77,7 +72,8 @@ exit /b
 goto :EOF
 
 :dl_from_url
-if not exist "%SCRIPT_CURRENT_DIR%%1" bitsadmin /TRANSFER "%1" "%2" "%SCRIPT_CURRENT_DIR%%1"
+if not exist .binaries mkdir .binaries
+if not exist "%SCRIPT_CURRENT_DIR%.binaries\%1" bitsadmin /TRANSFER "%1" "%2" "%SCRIPT_CURRENT_DIR%.binaries\%1"
 exit /b
 
 :trim
@@ -85,33 +81,6 @@ set %2=%1
 exit /b
 
 @end
-
-  /*
-  if (WScript.Arguments.Count() > 0) {
-    var fso = new ActiveXObject("Scripting.FileSystemObject");
-    var SCRIPT_CURRENT_DIR = fso.getParentFolderName(WScript.ScriptFullName);
-    var url = "https://raw.githubusercontent.com/cyginst/ms2inst-v1/master/binaries/wget.exe";
-    var fileName = SCRIPT_CURRENT_DIR + "\\wget.exe";
-    try {
-      downloadFile(url, fileName);
-    } catch (e) {
-      WScript.Echo("Could not download: wget.exe");
-    }
-    WScript.Quit();
-    function downloadFile(url, fileName) {
-      var StreamTypeEnum  = { adTypeBinary: 1, adTypeText: 2 };
-      var SaveOptionsEnum = { adSaveCreateNotExist: 1, adSaveCreateOverWrite: 2 };
-      var http = WScript.CreateObject("MSXML2.XMLHTTP");
-      var strm = WScript.CreateObject("ADODB.Stream");
-      http.Open("GET", url, false);
-      http.Send();
-      strm.Type = StreamTypeEnum.adTypeBinary;
-      strm.Open();
-      strm.Write(http.responseBody);
-      strm.SaveToFile(fileName, SaveOptionsEnum.adSaveCreateOverWrite);
-    }
-  }
-  */
 
   if (!String.prototype.format) {
     String.prototype.format = function() {
@@ -172,7 +141,6 @@ exit /b
     dt_icons:    (env.item("DT_ICONS") == "1"),
     home:         env.item("MSYS2_HOME").replace(/^\s+|\s+$/g, ''), /*trim()*/
     asis:        (env.item("MSYS2_ASIS") == "1"),
-    lang:         env.item("MSYS2_LANG"),
     font:         env.item("MSYS2_FONT"),
     font_height:  env.item("MSYS2_FONT_HEIGHT"),
     cursor_type:  env.item("MSYS2_CURSOR_TYPE"),
@@ -410,7 +378,7 @@ exit /b
 
     function editEmacsSiteStart(siteStartPath) {
       if (fso.FolderExists(fso.getParentFolderName(siteStartPath))) {
-        echo("EDIT: " + siteStartPath);
+        //echo("EDIT: " + siteStartPath);
         defaultSetting(siteStartPath,
           "(setq frame-title-format ",
           "(setq frame-title-format (format \"[%%b] @{0} [%s] - Emacs ({1}bit)\" (getenv \"MSYSTEM\")))".format(opts.name, opts.bits));
